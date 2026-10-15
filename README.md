@@ -1,4 +1,4 @@
-# YouTube Advanced CC
+# Youtube Advanced CC
 
 Extra controls for YouTube's existing CC button and Settings cog.
 
