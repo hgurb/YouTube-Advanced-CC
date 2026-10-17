@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings · YouTube Advanced CC</title>
+  <link rel="icon" href="icons/icon-32.png">
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="options.css">
+  <script src="settings.js" defer></script>
+  <script src="transfer.js" defer></script>
+  <script src="options.js" defer></script>
+</head>
+<body>
+<main>
+  <header>
+    <div class="header-bar"><div class="brand"><img src="icons/icon-48.png" width="40" height="40" alt=""><a class="repo-link" href="https://github.com/hgurb/YouTube-Advanced-CC" target="_blank" rel="noopener noreferrer" title="View YouTube Advanced CC on GitHub"><span>YouTube Advanced CC</span><span class="external-arrow" aria-hidden="true">↗</span><svg class="repo-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297C5.37.297 0 5.67 0 12.297c0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.043-1.61-4.043-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.729.083-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.835 2.809 1.305 3.495.998.108-.776.418-1.305.762-1.605-2.665-.3-5.466-1.334-5.466-5.93 0-1.31.469-2.381 1.236-3.221-.124-.303-.536-1.524.117-3.176 0 0 1.008-.322 3.301 1.23a11.51 11.51 0 0 1 3.003-.404c1.018.005 2.043.138 3.003.404 2.291-1.552 3.297-1.23 3.297-1.23.655 1.652.243 2.873.12 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.805 5.625-5.478 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.898-.015 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.595 24 12.297c0-6.627-5.373-12-12-12"/></svg></a></div>
+    <div class="header-actions">
+          <a class="changelog-link" href="#changelog">What’s new <span aria-hidden="true">↓</span></a>
+        <button id="theme-toggle" type="button" aria-label="Switch to light mode" title="Switch to light mode">
+          <svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+          <svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 14A9 9 0 0 1 10 3.2 9 9 0 1 0 20.8 14Z"/></svg>
+        </button>
+        </div></div>
+    <h1>Make subtitles your size.</h1>
+    <p>Choose how far and how fast the subtitle size changes when you scroll over CC.</p>
+  </header>
+  <aside class="intro"><strong>Your familiar controls</strong><p>Left-click CC to toggle subtitles. Right-click CC to reset to 100%. Scroll up to enlarge, down to shrink.</p><p>Right-click the Settings cog to open the subtitles menu with your preferred languages first.</p></aside>
+  <div class="toolbar"><h2>Settings</h2><span id="status" role="status">Loading…</span><button id="defaults" type="button">Reset defaults</button><button id="discard" type="button" disabled>Discard</button><button id="save" class="primary" type="submit" form="settings-form" disabled>Save</button></div>
+  <form id="settings-form">
+    <fieldset id="fields" disabled>
+      <legend>Options</legend>
+      <div class="cog-option cog-first">
+        <h2 class="option-heading">Settings cog</h2>
+        <label for="cogMenu"><input id="cogMenu" name="cogMenu" type="checkbox" role="switch" aria-describedby="cog-help" checked> Right-click Settings cog shortcut</label>
+        <p id="cog-help" class="hint">Open the subtitle menu with your preferred languages first. Enabled by default. Turn off to leave right-click on the cog unchanged.</p>
+      </div>
+      <div class="cog-option">
+      <h2 class="option-heading">Subtitle size</h2>
+      <p class="section-note">Choose a fixed step or your own list of subtitle sizes for scrolling.</p>
+      <div class="size-modes" role="radiogroup" aria-label="Subtitle sizing mode">
+        <label><input type="radio" name="sizing-mode" value="fixed" checked> Fixed increment</label>
+        <label><input type="radio" name="sizing-mode" value="custom"> Custom sizes</label>
+      </div>
+      <div class="fields" id="fixed-controls">
+        <div><label for="min">Minimum size (%)</label><input id="min" name="min" type="number" min="10" max="499" step="1" required aria-describedby="min-help"><p id="min-help" class="hint">10–499%, below the maximum. Invalid values reset to 10% when you leave the field or save.</p></div>
+        <div><label for="max">Maximum size (%)</label><input id="max" name="max" type="number" min="11" max="500" step="1" required aria-describedby="max-help"><p id="max-help" class="hint">11–500%, above the minimum. Invalid values reset to 500% when you leave the field or save.</p></div>
+        <div><label for="increment">Increment by (%)</label><input id="increment" name="increment" type="number" min="1" max="100" step="1" required aria-describedby="increment-help"><p id="increment-help" class="hint">1–100 percentage points per scroll.</p></div>
+      </div>
+      <div id="custom-controls" hidden>
+        <label for="custom-sizes">Subtitle sizes (%)</label>
+        <input id="custom-sizes" type="text" maxlength="600" placeholder="10, 20, 50, 60, 100, 343, 500" aria-describedby="custom-help custom-error">
+        <p id="custom-help" class="hint">Separate whole numbers with commas, without % signs. When you leave this field or save, values below 10 become 10 and values above 500 become 500. The list is sorted and duplicates removed. Keep at least 2 different sizes (up to 100 entries). This list sets its own minimum and maximum.</p>
+        <p id="custom-error" class="hint" role="status"></p>
+      </div>
+      <p class="example" id="example">Loading your settings…</p>
+      <p class="hint footnote">Scrolling stops at your limits. Right-click always resets to 100%, even if it is outside your range or custom list.</p>
+
+      </div>
+      <div class="cog-option">
+        <h2 class="option-heading">Preferred languages</h2>
+        <p id="languages-help" class="hint">Add a language name or keyword as it appears in your YouTube menu, such as Spanish, Español, or Japanese. Matching ignores capitalization and accents and includes variants such as “English (auto-generated)”. English/İngilizce and Turkish/Türkçe are recognized as pairs.</p>
+        <div id="languages-list"></div>
+        <button id="add-language" type="button">+ Add language or keyword</button>
+        <p class="hint">Up to 20 entries, 60 characters each. Use ↑ and ↓ to set the menu order after Off. If a language matches several keywords, the first match wins. Variants and unmatched languages keep YouTube’s order within their groups. Remove all entries to keep the original order. Applies when using the Settings cog shortcut.</p>
+      </div>
+      <p id="options-save-notice" class="hint" role="status" hidden>Click Save to apply your settings.</p>
+    </fieldset>
+  </form>
+  <footer>Saved on this browser. Changes apply to open YouTube tabs.</footer>
+  <details class="transfer" id="transfer">
+    <summary>Import &amp; export</summary>
+    <div class="transfer-content">
+      <p class="hint">Export your current settings as text to copy to another browser. Import loads settings into the editor for review. Click Save to apply them, or Discard to keep your saved settings. Includes both sizing modes, the cog shortcut, and preferred languages in order. Appearance stays local.</p>
+      <div class="transfer-input-heading">
+          <label for="transfer-text">Export / import string</label>
+          <button id="copy-transfer" type="button" aria-label="Copy to clipboard" title="Copy to clipboard" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"/></svg>
+          </button>
+        </div>
+      <textarea id="transfer-text" rows="5" maxlength="100000" spellcheck="false" placeholder="Click Export or paste a YouTube Advanced CC export string here."></textarea>
+      <div class="transfer-actions"><button id="export" type="button">Export &amp; copy</button><button id="import" class="primary" type="button">Import &amp; review</button><button id="import-save" class="primary" type="submit" form="settings-form" disabled>Save</button><span id="import-notice" class="hint" role="status" hidden>Review your changes, then click Save to apply them.</span></div>
+      <p id="transfer-status" class="hint" role="status"></p>
+    </div>
+  </details>
+  <details id="changelog" class="changelog">
+    <summary>Changelog</summary>
+    <div class="changelog-content">
+      <section aria-labelledby="version-110">
+        <h3 id="version-110">Version 1.1.0</h3>
+        <ul>
+          <li>Scroll over YouTube’s CC button to resize subtitles and right-click to reset to 100%. Hover to see the current size.</li>
+          <li>Choose fixed increments or a custom size list, with sizes from 10% to 500%.</li>
+          <li>Right-click the Settings cog to open the subtitles menu. Customize preferred language keywords and their order, or disable the shortcut.</li>
+          <li>Settings page with light and dark themes, plus text import and export.</li>
+        </ul>
+      </section>
+    </div>
+  </details>
+<p class="credit note">Created by <a href="https://github.com/hgurb" target="_blank" rel="noopener noreferrer">hgurb</a> <svg class="github-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297C5.37.297 0 5.67 0 12.297c0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.043-1.61-4.043-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.729.083-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.835 2.809 1.305 3.495.998.108-.776.418-1.305.762-1.605-2.665-.3-5.466-1.334-5.466-5.93 0-1.31.469-2.381 1.236-3.221-.124-.303-.536-1.524.117-3.176 0 0 1.008-.322 3.301 1.23a11.51 11.51 0 0 1 3.003-.404c1.018.005 2.043.138 3.003.404 2.291-1.552 3.297-1.23 3.297-1.23.655 1.652.243 2.873.12 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.805 5.625-5.478 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.898-.015 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.595 24 12.297c0-6.627-5.373-12-12-12"/></svg></p>
+</main>
+</body>
+</html>
+

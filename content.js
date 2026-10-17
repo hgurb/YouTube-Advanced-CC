@@ -6,7 +6,24 @@
 
   const buttonSelector = ".ytp-subtitles-button";
   const playerSelector = ".html5-video-player";
-  const sizePercentages = [50, 75, 100, 150, 200, 300, 400];
+  const sizing = globalThis.YTCCSettings;
+  let sizeConfig = sizing.normalize();
+  window.addEventListener("ytcc-settings", event => {
+    try {
+      const value = JSON.parse(event.detail);
+      if (sizing.valid(value)) {
+        sizeConfig = sizing.normalize(value);
+        // Also refresh a menu already opened by this extension.
+        queueMicrotask(() => document.querySelectorAll(playerSelector).forEach(player => {
+          if (menuSessions.has(player)) {
+            const menu = menuFor(player);
+            if (menu) sortLanguages(menu);
+          }
+        }));
+      }
+    } catch { /* Ignore malformed page events. */ }
+  });
+  window.dispatchEvent(new Event("ytcc-settings-ready"));
   const errors = new WeakMap();
   const states = new WeakMap();
   let refreshTimer;
@@ -19,7 +36,7 @@
     let size;
     try {
       const settings = player.getSubtitlesUserSettings?.();
-      if (settings) size = sizePercentages[(settings.fontSizeIncrement ?? 0) + 2];
+      if (settings) size = sizing.fromNative(settings.fontSizeIncrement ?? 0);
     } catch { /* Captions may still be loading. */ }
     const text = `Size (${size ? `${size}%` : "—"})`;
     if (state.label.textContent !== text) state.label.textContent = text;
@@ -74,14 +91,25 @@
       }
       const current = settings.fontSizeIncrement ?? 0;
       if (!Number.isFinite(current)) throw new Error("Unknown subtitle size");
-      const step = direction > 0 ? Math.floor(current) + 1 : Math.ceil(current) - 1;
-      const next = Math.max(-2, Math.min(4, step));
+      const percent = sizing.next(sizing.fromNative(current), direction, sizeConfig);
+      const next = sizing.toNative(percent);
       if (next !== current) {
         // Same native update as the Font size menu: preserve other appearance
         // settings, redraw captions, and let YouTube persist the change.
-        player.updateSubtitlesUserSettings({ fontSizeIncrement: next });
-        if (player.getSubtitlesUserSettings()?.fontSizeIncrement !== next) {
-          throw new Error("YouTube did not apply the subtitle size");
+        try {
+          player.updateSubtitlesUserSettings({ fontSizeIncrement: next });
+          const applied = player.getSubtitlesUserSettings()?.fontSizeIncrement;
+          if (!Number.isFinite(applied) || Math.abs(applied - next) > 0.000001) {
+            throw new Error("YouTube did not apply the subtitle size");
+          }
+        } catch (error) {
+          // Restore the last usable size if an update partially changed the
+          // renderer before throwing or returning an invalid setting.
+          const restore = sizing.fromNative(current);
+          player.updateSubtitlesUserSettings({
+            fontSizeIncrement: Number.isFinite(restore) && restore >= 10 && restore <= 500 ? current : 0
+          });
+          throw error;
         }
       }
     } catch (error) {
@@ -160,17 +188,22 @@
       return isCaptionTitle(title) || /^(auto-translate|auto translate|otomatik ceviri)$/.test(normalize(title));
     });
   }
+  const originalLanguageOrder = new WeakMap();
   function sortLanguages(menu) {
     const panel = captionPanel(menu);
     const list = panel?.querySelector(".ytp-panel-menu");
     if (!list) return;
     const rows = [...list.children].filter(row => row.matches(".ytp-menuitem"));
+    let original = originalLanguageOrder.get(list);
+    if (!original) { original = []; originalLanguageOrder.set(list, original); }
+    for (const row of rows) if (!original.includes(row)) original.push(row);
     const bucket = row => {
       const text = normalize(row.querySelector(".ytp-menuitem-label")?.textContent || row.textContent);
       if (/^(off|kapali)$/.test(text)) return 0;
-      return /english|ingilizce|turkish|turkce/.test(text) ? 1 : 2;
+      const preference = sizeConfig.languages.findIndex(keyword => sizing.matchesLanguage(text, [keyword]));
+      return preference < 0 ? sizeConfig.languages.length + 1 : preference + 1;
     };
-    const ordered = [...rows].sort((a, b) => bucket(a) - bucket(b));
+    const ordered = [...rows].sort((a, b) => bucket(a) - bucket(b) || original.indexOf(a) - original.indexOf(b));
     if (ordered.every((row, index) => row === rows[index])) return;
     const focused = document.activeElement;
     // Move the original nodes so their native selection handlers stay attached.
@@ -266,6 +299,7 @@
     const settings = event.target.closest(".ytp-settings-button");
     const settingsPlayer = settings?.closest(playerSelector);
     if (settingsPlayer) {
+      if (!sizeConfig.cogMenu) return;
       event.preventDefault();
       event.stopImmediatePropagation();
       if (!settings.disabled && settings.getAttribute("aria-disabled") !== "true") {

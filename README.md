@@ -5,8 +5,9 @@ Extra controls for YouTube's existing CC button and Settings cog.
 - **Left-click CC:** toggle subtitles.
 - **Right-click CC:** reset subtitle appearance, including size to 100%.
 - **Scroll over CC:** increase or decrease subtitle size.
+- **Click the extension icon:** configure minimum size, maximum size, and scroll increment. Sizes support 10%–500%; defaults are 50%–400% in 10-point steps.
 - **Hover over CC:** see the current size.
-- **Right-click Settings:** open the subtitle menu with English/İngilizce and Turkish/Türkçe first, after Off/Kapalı. Other languages keep their order.
+- **Right-click Settings:** open the subtitle menu with your preferred languages first, after Off/Kapalı. Add or remove language keywords in settings, or disable this shortcut. English is the only default; English/İngilizce and Turkish/Türkçe aliases are supported.
 
 ## Install
 

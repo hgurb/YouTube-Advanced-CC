@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "YouTube Advanced CC",
-  "version": "1.2.0",
-  "description": "CC: click to toggle, right-click to reset, scroll to resize. Right-click Settings for subtitles with English and Turkish first.",
+  "version": "1.1.0",
+  "description": "CC: click to toggle, right-click to reset, scroll to resize. Right-click Settings for subtitles with your preferred languages first.",
   "minimum_chrome_version": "120",
   "icons": {
     "16": "icons/icon-16.png",
@@ -17,6 +17,7 @@
         "https://youtube.com/*"
       ],
       "js": [
+        "settings.js",
         "content.js"
       ],
       "css": [
@@ -25,6 +26,38 @@
       "run_at": "document_idle",
       "world": "MAIN",
       "all_frames": true
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://youtube.com/*"
+      ],
+      "world": "ISOLATED",
+      "all_frames": true,
+      "js": [
+        "settings-bridge.js"
+      ],
+      "run_at": "document_idle"
     }
-  ]
+  ],
+  "permissions": [
+    "storage"
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_title": "YouTube Advanced CC settings",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
 }
+
